@@ -1,0 +1,27 @@
+Load Balancer Security Group: alb-sg
+---
+
+Inbound:
+- TCP 80 from 0.0.0.0/0
+- TCP 443 from 0.0.0.0/0
+Outbound:
+- TCP 80 to App SG
+
+Application Security Group: app-sg
+---
+
+Inbound:
+- TCP 80 from ALB SG
+- TCP 443 from ALB SG
+Outbound:
+- TCP 80 to 0.0.0.0/0
+- TCP 443 to 0.0.0.0/0
+- TCP 5432 to Data SG
+
+Database Security Group: data-sg
+---
+
+Inbound:
+- TCP 5432 from App SG
+Outbound:
+- No explicit outbound rules

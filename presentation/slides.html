@@ -1,0 +1,426 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Three Tier Architecture Presentation</title>
+  <style>
+    @page {
+      size: 16in 9in;
+      margin: 0;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #111827;
+      color: #1f2937;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .slide {
+      width: 16in;
+      height: 9in;
+      page-break-after: always;
+      background: #f8fafc;
+      padding: 0.62in 0.78in;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .title-slide {
+      background: #0f172a;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    h1 {
+      margin: 0 0 0.2in;
+      font-size: 54px;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      margin: 0 0 0.28in;
+      font-size: 38px;
+      color: #0f172a;
+    }
+
+    .title-slide h1 {
+      font-size: 62px;
+      max-width: 10in;
+    }
+
+    .subtitle {
+      font-size: 25px;
+      color: #cbd5e1;
+      max-width: 9in;
+      line-height: 1.35;
+    }
+
+    .meta {
+      margin-top: 0.55in;
+      font-size: 18px;
+      color: #94a3b8;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.35in;
+      align-items: start;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.24in;
+    }
+
+    .card {
+      background: white;
+      border: 1px solid #dbe3ee;
+      border-radius: 10px;
+      padding: 0.25in;
+      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+    }
+
+    .card h3 {
+      margin: 0 0 0.12in;
+      font-size: 24px;
+      color: #111827;
+    }
+
+    ul {
+      margin: 0;
+      padding-left: 0.25in;
+      font-size: 22px;
+      line-height: 1.42;
+    }
+
+    li {
+      margin: 0 0 0.08in;
+    }
+
+    p {
+      font-size: 22px;
+      line-height: 1.42;
+      margin: 0 0 0.16in;
+    }
+
+    .diagram {
+      width: 100%;
+      max-height: 6.75in;
+      object-fit: contain;
+      background: white;
+      border: 1px solid #dbe3ee;
+      border-radius: 10px;
+      padding: 0.12in;
+    }
+
+    .wide-diagram {
+      width: 100%;
+      height: 6.8in;
+      object-fit: contain;
+      background: white;
+      border: 1px solid #dbe3ee;
+      border-radius: 10px;
+      padding: 0.12in;
+    }
+
+    .footer {
+      position: absolute;
+      left: 0.78in;
+      right: 0.78in;
+      bottom: 0.25in;
+      display: flex;
+      justify-content: space-between;
+      color: #64748b;
+      font-size: 14px;
+    }
+
+    .pill {
+      display: inline-block;
+      background: #e0f2fe;
+      color: #075985;
+      padding: 0.06in 0.12in;
+      border-radius: 999px;
+      font-size: 16px;
+      margin-right: 0.06in;
+      margin-bottom: 0.08in;
+    }
+
+    .code {
+      font-family: Menlo, Consolas, monospace;
+      font-size: 18px;
+      line-height: 1.38;
+      background: #0f172a;
+      color: #e5e7eb;
+      padding: 0.18in;
+      border-radius: 8px;
+      white-space: pre-wrap;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 20px;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    th, td {
+      border: 1px solid #dbe3ee;
+      padding: 0.12in;
+      text-align: left;
+    }
+
+    th {
+      background: #e8eef6;
+      color: #0f172a;
+    }
+
+    .big-number {
+      font-size: 44px;
+      font-weight: 700;
+      color: #0369a1;
+      margin-bottom: 0.04in;
+    }
+
+    .small {
+      font-size: 17px;
+      color: #64748b;
+    }
+  </style>
+</head>
+<body>
+  <section class="slide title-slide">
+    <h1>Three Tier Architecture on AWS</h1>
+    <div class="subtitle">Terraform deployment with public, application, and data tiers across two Availability Zones.</div>
+    <div class="meta">By: Mos</div>
+  </section>
+
+  <section class="slide">
+    <h2>Agenda</h2>
+    <div class="grid-3">
+      <div class="card"><h3>Architecture</h3><p>Diagram, tier purpose, traffic flow, design choices.</p></div>
+      <div class="card"><h3>Live Demo</h3><p>ALB URL, instance rotation, health endpoint, isolation test.</p></div>
+      <div class="card"><h3>Costs</h3><p>Monthly estimate, cost controls, savings opportunities.</p></div>
+      <div class="card"><h3>Challenges</h3><p>Issues encountered and how they were solved.</p></div>
+      <div class="card"><h3>Next Steps</h3><p>Production improvements, scale, limitations.</p></div>
+      <div class="card"><h3>Q&amp;A</h3></div>
+    </div>
+  </section>
+
+  <section class="slide">
+    <h2>Architecture Overview</h2>
+    <img class="wide-diagram" src="../architecture/architecture-diagram.png" alt="Architecture diagram">
+  </section>
+
+  <section class="slide">
+    <h2>Traffic Flow</h2>
+    <div class="grid">
+      <img class="diagram" src="../architecture/traffic-flow-diagram.png" alt="Traffic flow diagram">
+      <div class="card">
+        <h3>Request Path</h3>
+        <ul>
+          <li>User sends HTTP request to the ALB DNS name.</li>
+          <li>ALB forwards traffic to a healthy app instance.</li>
+          <li>App reads EC2 metadata for instance ID, private IP, and AZ.</li>
+          <li>App checks connectivity to the database placeholder.</li>
+          <li>Health checks use <code>/health</code> and return <code>ok</code>.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide">
+    <h2>Security Groups</h2>
+    <img class="wide-diagram" style="height:4.6in;" src="../architecture/security-groups-diagram.png" alt="Security groups diagram">
+    <div class="card" style="margin-top:0.25in;">
+        <h3>Security Boundaries</h3>
+        <ul>
+          <li>ALB security group allows HTTP and HTTPS from the internet.</li>
+          <li>App security group allows traffic only from the ALB security group.</li>
+          <li>Data security group allows port <code>5432</code> only from the app security group.</li>
+          <li>No SSH rule is opened for private instances.</li>
+          <li>The ALB is the only public entry point.</li>
+        </ul>
+    </div>
+  </section>
+
+  <section class="slide">
+    <h2>Key Design Decisions</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>Network</h3>
+        <ul>
+          <li>VPC CIDR: 10.0.0.0/16</li>
+          <li>Six subnets across two AZs</li>
+          <li>Separate route tables for public, app, and data tiers</li>
+          <li>Data tier route table has local VPC route only</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Security</h3>
+        <ul>
+          <li>ALB is the only public entry point</li>
+          <li>App allows traffic only from ALB security group</li>
+          <li>Data allows port 5432 only from app security group</li>
+          <li>IMDSv2 required and root volumes encrypted</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide">
+    <h2>Live Demo</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>Steps:</h3>
+        <ul>
+          <li>Open the app through the ALB DNS name.</li>
+          <li>Refresh or run curl to show different instance IDs.</li>
+          <li>Open <code>/health</code> and show <code>ok</code>.</li>
+          <li>Try SSH to a private IP to show isolation.</li>
+        </ul>
+      </div>
+      <div class="code">ALB_DNS=app-alb-1196878497.us-east-1.elb.amazonaws.com
+
+curl http://$ALB_DNS/health
+
+for i in {1..20}; do
+  curl -s http://$ALB_DNS | awk -F'[&lt;&gt;]' '/class="value"&gt;i-/{print $3}'
+done | sort | uniq -c</div>
+    </div>
+  </section>
+
+  <section class="slide">
+    <h2>Demo Results</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>Load Balancing</h3>
+        <div class="code">7 i-0041fb351f4d31891
+6 i-02f121d4d79e00783
+7 i-03768b6cd9c713ae6</div>
+        <p class="small">20 requests were distributed across all three app instances.</p>
+      </div>
+      <div class="card">
+        <h3>Failover</h3>
+        <div class="code">Stopped:
+i-0041fb351f4d31891
+
+After stop:
+10 i-02f121d4d79e00783
+10 i-03768b6cd9c713ae6</div>
+        <p class="small">The ALB removed the stopped instance and kept serving traffic.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide">
+    <h2>Challenges and Solutions</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>Challenges</h3>
+        <ul>
+          <li>Keeping the cost low with the NAT Gateway and ALB requirement.</li>
+          <li>Stopping and starting instances will kill the running process.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Solutions</h3>
+        <ul>
+          <li>Used Terraform to be provision and destroy the infrastructure as needed.</li>
+          <li>Ensure linux services are configured to start on boot.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide">
+    <h2>Cost Analysis</h2>
+    <table>
+      <thead>
+        <tr><th>Item</th><th>Estimate</th><th>Note</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>4 t3.micro EC2 instances</td><td>$30.37/month</td><td>Before Free Tier</td></tr>
+        <tr><td>32 GB gp3 EBS</td><td>$2.56/month</td><td>Before Free Tier</td></tr>
+        <tr><td>1 NAT Gateway</td><td>$32.85/month</td><td>Largest fixed cost</td></tr>
+        <tr><td>1 Application Load Balancer</td><td>$16.43/month</td><td>Before LCU usage</td></tr>
+        <tr><td>Fixed subtotal</td><td>$82.21/month</td><td>Before traffic based charges</td></tr>
+        <tr><td>Planning range</td><td>$80-$100/month</td><td>Low traffic demo estimate</td></tr>
+      </tbody>
+    </table>
+    <div class="grid" style="margin-top:0.35in">
+      <div class="card"><div class="big-number">$82.21</div><p>Fixed monthly subtotal from EC2, EBS, NAT Gateway hourly, and ALB hourly costs.</p></div>
+      <div class="card"><div class="big-number">$80-$100</div><p>Planning range with a small buffer for usage based charges.</p></div>
+    </div>
+    <p class="small" style="margin-top:0.2in">For this demo, the main cost is not traffic. The main fixed cost is the NAT Gateway hourly charge.</p>
+  </section>
+
+  <section class="slide">
+    <h2>Cost Optimization</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>Already Applied</h3>
+        <ul>
+          <li>Used t3.micro instances.</li>
+          <li>Used small 8 GB gp3 root volumes.</li>
+          <li>Used EC2 database placeholder instead of RDS for the lab.</li>
+          <li>Used one NAT Gateway instead of one per AZ.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Savings Opportunities</h3>
+        <ul>
+          <li>Destroy stack after demo or testing.</li>
+          <li>Use one app instance while developing.</li>
+          <li>Remove NAT Gateway when it is not needed.</li>
+          <li>Use schedules or Auto Scaling for non demo hours.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide">
+    <h2>Improvements and Next Steps</h2>
+    <div class="grid">
+      <div class="card">
+        <h3>Production Additions</h3>
+        <ul>
+          <li>HTTPS with ACM certificate.</li>
+          <li>AWS WAF on the ALB.</li>
+          <li>CloudWatch logs, metrics, and alarms.</li>
+          <li>Remote Terraform state with locking.</li>
+          <li>Secrets Manager for database credentials.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Scale and HA</h3>
+        <ul>
+          <li>Use Auto Scaling Group for app instances.</li>
+          <li>Replace placeholder DB with RDS Multi AZ.</li>
+          <li>Add one NAT Gateway per AZ for production HA.</li>
+          <li>Add backup and restore.</li>
+          <li>Use Route 53 and a custom domain.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="slide">
+    <div class="grid">
+      <div class="card">
+        <h2 style="text-align: center;">Q&amp;A</h2>
+      </div>
+    </div>
+  </section>
+</body>
+</html>

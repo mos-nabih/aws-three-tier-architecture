@@ -1,0 +1,31 @@
+Application Load Balancer
+---
+
+Name: app-alb
+Scheme: internet facing
+Type: application
+Subnets:
+- public-subnet-1
+- public-subnet-2
+Security Group:
+- alb-sg
+
+Listener
+---
+
+Port: 80
+Protocol: HTTP
+Default action: forward to app-target-group
+
+Target Group
+---
+
+Name: app-target-group
+Protocol: HTTP
+Port: 80
+Target type: instance
+Health check path: /health
+Health check matcher: 200
+Health check interval: 30 seconds
+Healthy threshold: 2
+Unhealthy threshold: 2

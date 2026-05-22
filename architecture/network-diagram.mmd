@@ -1,0 +1,30 @@
+flowchart TB
+    subgraph vpc["VPC 10.0.0.0/16"]
+        subgraph az1["us-east-1a"]
+            pub1["public-subnet-1 10.0.1.0/24"]
+            app1["app-private-subnet-1 10.0.11.0/24"]
+            data1["data-private-subnet-1 10.0.21.0/24"]
+        end
+
+        subgraph az2["us-east-1b"]
+            pub2["public-subnet-2 10.0.2.0/24"]
+            app2["app-private-subnet-2 10.0.12.0/24"]
+            data2["data-private-subnet-2 10.0.22.0/24"]
+        end
+
+        igw["Internet Gateway"]
+        nat["NAT Gateway in public-subnet-1"]
+        public_rt["Public RT: 0.0.0.0/0 -> IGW"]
+        app_rt["App Private RT: 0.0.0.0/0 -> NAT"]
+        data_rt["Data Private RT: local only"]
+    end
+
+    pub1 --> public_rt
+    pub2 --> public_rt
+    app1 --> app_rt
+    app2 --> app_rt
+    data1 --> data_rt
+    data2 --> data_rt
+    public_rt --> igw
+    app_rt --> nat
+    nat --> igw

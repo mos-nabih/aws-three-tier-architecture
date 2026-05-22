@@ -1,0 +1,9 @@
+flowchart LR
+    internet["Internet 0.0.0.0/0"]
+    alb_sg["ALB SG<br/>Inbound: 80,443 from Internet<br/>Outbound: 80 to App SG"]
+    app_sg["App SG<br/>Inbound: 80,443 from ALB SG<br/>Outbound: 5432 to Data SG"]
+    data_sg["Data SG<br/>Inbound: 5432 from App SG"]
+
+    internet -->|TCP 80/443| alb_sg
+    alb_sg -->|TCP 80| app_sg
+    app_sg -->|TCP 5432| data_sg

@@ -1,0 +1,18 @@
+sequenceDiagram
+    participant User
+    participant ALB
+    participant App as Private App EC2
+    participant DB as Data Placeholder EC2
+
+    User->>ALB: HTTP GET /
+    ALB->>App: Forward request on port 80
+    App->>App: Read instance metadata
+    App->>DB: TCP connection to port 5432
+    DB-->>App: Connection accepted
+    App-->>ALB: HTML response
+    ALB-->>User: HTTP 200
+
+    User->>ALB: HTTP GET /health
+    ALB->>App: Health check request
+    App-->>ALB: ok
+    ALB-->>User: HTTP 200

@@ -1,0 +1,32 @@
+VPC
+---
+
+Name: three-tier-vpc
+CIDR: 10.0.0.0/16
+Region: us-east-1
+Availability Zones: us-east-1a, us-east-1b
+DNS support: enabled
+DNS hostnames: enabled
+
+Subnets
+---
+
+public-subnet-1: 10.0.1.0/24, us-east-1a, public IP on launch enabled
+public-subnet-2: 10.0.2.0/24, us-east-1b, public IP on launch enabled
+app-private-subnet-1: 10.0.11.0/24, us-east-1a
+app-private-subnet-2: 10.0.12.0/24, us-east-1b
+data-private-subnet-1: 10.0.21.0/24, us-east-1a
+data-private-subnet-2: 10.0.22.0/24, us-east-1b
+
+Route Tables
+---
+
+public-route-table: 0.0.0.0/0 -> Internet Gateway
+app-private-route-table: 0.0.0.0/0 -> NAT Gateway
+data-private-route-table: local VPC route only
+
+Gateways
+---
+
+Internet Gateway: attached to VPC
+NAT Gateway: deployed in public-subnet-1
