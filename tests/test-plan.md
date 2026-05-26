@@ -15,7 +15,18 @@ terraform fmt -check -recursive
 terraform validate
 ```
 
-3. Review plan:
+3. Run native mocked Terraform tests:
+
+```bash
+terraform test
+```
+
+Expected result:
+
+- The mocked three-tier plan tests pass.
+- No AWS infrastructure is created.
+
+4. Review plan:
 
 ```bash
 terraform plan

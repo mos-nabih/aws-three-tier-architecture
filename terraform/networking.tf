@@ -37,9 +37,10 @@ resource "aws_subnet" "public" {
 resource "aws_subnet" "app_private" {
   count = 2
 
-  vpc_id            = aws_vpc.main.id
-  cidr_block        = cidrsubnet(var.vpc_cidr, 8, count.index + 11)
-  availability_zone = local.availability_zones[count.index]
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = cidrsubnet(var.vpc_cidr, 8, count.index + 11)
+  availability_zone       = local.availability_zones[count.index]
+  map_public_ip_on_launch = false
 
   tags = {
     Name = "app-private-subnet-${count.index + 1}"
@@ -50,9 +51,10 @@ resource "aws_subnet" "app_private" {
 resource "aws_subnet" "data_private" {
   count = 2
 
-  vpc_id            = aws_vpc.main.id
-  cidr_block        = cidrsubnet(var.vpc_cidr, 8, count.index + 21)
-  availability_zone = local.availability_zones[count.index]
+  vpc_id                  = aws_vpc.main.id
+  cidr_block              = cidrsubnet(var.vpc_cidr, 8, count.index + 21)
+  availability_zone       = local.availability_zones[count.index]
+  map_public_ip_on_launch = false
 
   tags = {
     Name = "data-private-subnet-${count.index + 1}"
