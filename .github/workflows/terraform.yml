@@ -42,3 +42,20 @@ jobs:
 
       - name: Terraform test
         run: terraform test -no-color
+
+      - name: Trivy Terraform security scan
+        uses: aquasecurity/trivy-action@0.35.0
+        with:
+          scan-type: config
+          scan-ref: terraform
+          hide-progress: true
+          exit-code: "0"
+          severity: HIGH,CRITICAL
+
+      - name: Checkov Terraform security scan
+        uses: bridgecrewio/checkov-action@v12
+        with:
+          directory: terraform
+          framework: terraform
+          quiet: true
+          soft_fail: true
