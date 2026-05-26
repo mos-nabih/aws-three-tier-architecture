@@ -1,0 +1,44 @@
+name: Terraform
+
+on:
+  push:
+    branches:
+      - main
+    paths: &terraform_paths
+      - "terraform/**"
+      - ".github/workflows/terraform.yml"
+  pull_request:
+    paths: *terraform_paths
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Format, validate, and test
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: terraform
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v4
+        with:
+          terraform_version: 1.15.4
+
+      - name: Terraform init
+        run: terraform init -backend=false
+
+      - name: Terraform format check
+        run: terraform fmt -check -recursive
+
+      - name: Terraform validate
+        run: terraform validate -no-color
+
+      - name: Terraform test
+        run: terraform test -no-color
