@@ -104,6 +104,30 @@ jobs:
       - name: Render Terraform plan
         run: terraform show -no-color tfplan > plan.txt
 
+      - name: Render Terraform plan JSON
+        run: terraform show -json tfplan > plan.json
+
+      - name: Setup Infracost
+        uses: infracost/actions/setup@v4
+        with:
+          api-key: ${{ secrets.INFRACOST_API_KEY }}
+
+      - name: Generate Infracost estimate
+        run: |
+          infracost breakdown \
+            --path plan.json \
+            --format json \
+            --out-file infracost.json
+
+      - name: Comment Infracost estimate
+        run: |
+          infracost comment github \
+            --path infracost.json \
+            --repo "$GITHUB_REPOSITORY" \
+            --github-token "${{ github.token }}" \
+            --pull-request "${{ github.event.pull_request.number }}" \
+            --behavior update
+
       - name: Upload Terraform plan artifact
         uses: actions/upload-artifact@v7
         with:
@@ -111,6 +135,8 @@ jobs:
           path: |
             terraform/tfplan
             terraform/plan.txt
+            terraform/plan.json
+            terraform/infracost.json
           retention-days: 7
 
       - name: Comment Terraform plan
