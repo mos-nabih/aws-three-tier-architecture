@@ -26,7 +26,19 @@ Expected result:
 - The mocked three-tier plan tests pass.
 - No AWS infrastructure is created.
 
-4. Review plan:
+4. Run local security scans:
+
+```bash
+trivy config --exit-code 0 --severity HIGH,CRITICAL .
+checkov --directory . --framework terraform --soft-fail
+```
+
+Expected result:
+
+- Findings are reported for review.
+- Scans do not block local development while the CI pipeline is in soft-fail mode.
+
+5. Review plan:
 
 ```bash
 terraform plan
@@ -37,6 +49,42 @@ Expected result:
 - Terraform shows resources to create.
 - No validation errors.
 - No unexpected public EC2 instances.
+
+6. Generate a local cost estimate:
+
+```bash
+terraform plan -out=tfplan
+terraform show -json tfplan > plan.json
+infracost breakdown --path plan.json
+```
+
+Expected result:
+
+- Infracost shows the estimated monthly cost impact for the Terraform plan.
+
+## Pull Request Pipeline
+
+The GitHub Actions Terraform workflow runs when files under `terraform/` or the
+workflow file change.
+
+Validation job:
+
+- formats Terraform
+- validates Terraform
+- runs native mocked tests
+- runs Trivy
+- runs Checkov
+
+Plan job:
+
+- runs only for pull requests
+- assumes AWS credentials with GitHub OIDC
+- runs `terraform plan`
+- uploads plan artifacts
+- comments the Terraform plan on the pull request
+- comments the Infracost estimate on the pull request
+
+The pipeline does not apply infrastructure automatically.
 
 ## Deployment Tests
 

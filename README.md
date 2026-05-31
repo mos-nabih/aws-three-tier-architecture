@@ -12,6 +12,39 @@ The stack includes:
 - Data tier: isolated private EC2 database placeholder
 - Network foundation: VPC, six subnets, route tables, Internet Gateway, and NAT Gateway
 
+## Pipeline
+
+The Terraform pipeline is defined in
+[.github/workflows/terraform.yml](.github/workflows/terraform.yml). It runs on
+pull requests and on pushes to `main` when Terraform code or the workflow file
+changes.
+
+The validation job runs:
+
+- `terraform init -backend=false`
+- `terraform fmt -check -recursive`
+- `terraform validate -no-color`
+- `terraform test -no-color`
+- Trivy configuration scanning for high and critical Terraform findings
+- Checkov Terraform scanning in soft-fail mode
+
+Pull requests also run a plan job after validation succeeds. The plan job uses
+GitHub OIDC to assume an AWS IAM role, runs `terraform plan`, posts the plan as
+a PR comment, uploads the binary and rendered plan files as an artifact, and
+posts an Infracost estimate.
+
+Required repository secrets:
+
+- `AWS_ROLE_TO_ASSUME`: IAM role ARN used by GitHub Actions for Terraform plan
+- `INFRACOST_API_KEY`: API key used to generate PR cost estimates
+
+Optional repository variables:
+
+- `AWS_REGION`: AWS region for the plan job. Defaults to `us-east-1`.
+
+The workflow intentionally does not run `terraform apply`. Deployment remains a
+manual step.
+
 ## Architecture Description
 
 The architecture uses one VPC named `three-tier-vpc` with CIDR block
