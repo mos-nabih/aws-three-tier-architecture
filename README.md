@@ -1,5 +1,7 @@
 # Three Tier Architecture on AWS
 
+[![Terraform](https://github.com/mos-nabih/aws-three-tier-architecture/actions/workflows/terraform.yml/badge.svg)](https://github.com/mos-nabih/aws-three-tier-architecture/actions/workflows/terraform.yml)
+
 This project provisions a three tier AWS architecture using Terraform.
 It is designed to focuses on clear network separation, least privilege security groups, and repeatable deployment.
 
